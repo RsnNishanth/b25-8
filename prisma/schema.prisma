@@ -1,0 +1,50 @@
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id             Int             @id @default(autoincrement())
+  title          String
+  price          Int
+  image_url      String
+  rating         Int
+  ProductDetails ProductDetails?   // optional 1:1 relation
+}
+
+model ProductDetails {
+  product_detail_id Int               @id @default(autoincrement())
+  image_url         String
+  title             String
+  style             String
+  price             Int
+  description       String
+  brand             String
+  total_reviews     Int
+  rating            Int
+  availability      String
+  product_id        Int               @unique   // one detail per product
+  products          Product           @relation(fields: [product_id], references: [id])
+  SimilarProducts   SimilarProducts[] // 1:N relation
+}
+
+model SimilarProducts {
+  id              Int             @id @default(autoincrement())
+  image_url       String
+  title           String
+  style           String
+  price           Int
+  description     String
+  brand           String
+  total_reviews   Int
+  rating          Int
+  availability    String
+  productDetailId Int
+  productDetail   ProductDetails  @relation(fields: [productDetailId], references: [product_detail_id])
+}
